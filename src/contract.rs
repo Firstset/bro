@@ -1,5 +1,7 @@
 use std::str::FromStr;
 
+use alloy::dyn_abi::SolType;
+use alloy::sol_types::sol_data::Bool;
 use anyhow::Result;
 use alloy::primitives::{Bytes, Address, FixedBytes};
 use alloy::providers::Provider;
@@ -43,10 +45,14 @@ impl Contract {
             .with_to(self.address)
             .with_input(input);
 
+        println!("[bro] Calling isTimestampActionable with transaction: {:?}", tx);
+
         let response = self.provider.call(&tx).await?;
-        
+
         // Decode the response
-        let result = response.to_string().parse::<bool>()?;
+        let result = Bool::abi_decode(&response.0, false)?;
+
+        println!("[bro] Result: {:?}", result);
 
         Ok(result)
     }

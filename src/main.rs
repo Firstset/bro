@@ -45,6 +45,8 @@ async fn main() -> Result<()> {
             }
         };
 
+        println!("[bro] Block {} was proposed by {}, continuing...", last_checked_block_num, miner);
+
         // 3) Get the timestamp of the parent block (i.e. the next block to be proposed after the current one we proposed)
         let parent_block_timestamp = match execution.get_block_timestamp_by_number(last_checked_block_num + 1).await? {
             Some(timestamp) => timestamp,
@@ -53,6 +55,8 @@ async fn main() -> Result<()> {
                 panic!("Timestamp for block {} must exist - this is not possible", last_checked_block_num + 1);
             }
         }; 
+
+        println!("[bro] Parent block timestamp: {}", parent_block_timestamp);
 
         // 4) Check whether the block is actionable (rewards not yet distributed)
         let is_actionable = contract.is_timestamp_actionable(parent_block_timestamp).await?;
